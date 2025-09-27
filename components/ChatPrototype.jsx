@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+// components/ChatPrototype.jsx
+import React, { useState, useEffect } from "react";
 import {
   TextArea,
   Button,
@@ -9,15 +10,20 @@ import {
   Theme,
   Avatar
 } from "@carbon/react";
+import "../styles/globals.css";
 
 export default function ChatPrototype() {
-  const [messages, setMessages] = useState([
-    { role: "assistant", text: "Hello! I’m here to chat with you." },
-    { role: "user", text: "Hi there!" },
-    { role: "assistant", text: "How can I help today?" }
-  ]);
-
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+
+  // Initialize mocked conversation on client only
+  useEffect(() => {
+    setMessages([
+      { role: "assistant", text: "Hello! I’m here to chat with you." },
+      { role: "user", text: "Hi there!" },
+      { role: "assistant", text: "How can I help today?" }
+    ]);
+  }, []);
 
   const handleSend = () => {
     if (!input.trim()) return;
@@ -90,4 +96,3 @@ export default function ChatPrototype() {
     </Theme>
   );
 }
-
