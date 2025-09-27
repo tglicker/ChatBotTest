@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  TextArea,
-  Button,
-  Tile,
-  Grid,
-  Column,
-  Row
-} from "@carbon/react";
+import { TextArea, Button } from "@carbon/react";
 
 export default function ChatPrototype() {
   const [messages, setMessages] = useState([]);
@@ -22,66 +15,49 @@ export default function ChatPrototype() {
 
   const handleSend = () => {
     if (!input.trim()) return;
-
     setMessages(prev => [...prev, { role: "user", text: input }]);
     setInput("");
 
     setTimeout(() => {
       setMessages(prev => [...prev, { role: "assistant", text: "This is a mocked response." }]);
-    }, 1000);
+    }, 500);
   };
 
   return (
-    <Theme theme="g10">
-      <Grid fullWidth>
-        <Row>
-          <Column lg={12}>
-            <div style={{
-              height: "70vh",
-              overflowY: "auto",
-              marginBottom: "1rem",
-              padding: "1rem",
-              border: "1px solid #e0e0e0",
-              borderRadius: "0.5rem",
-              background: "white"
-            }}>
-              {messages.map((msg, idx) => (
-                <Tile
-                  key={idx}
-                  className={msg.role === "user" ? "user-message" : "assistant-message"}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    marginBottom: "0.5rem",
-                    justifyContent: msg.role === "user" ? "flex-end" : "flex-start"
-                  }}
-                >
-                  {msg.role === "assistant" && (
-                    <Avatar size="sm" name="Assistant" image="https://placekitten.com/32/32" />
-                  )}
-                  <span style={{ margin: "0 0.5rem" }}>
-                    <strong>{msg.role}:</strong> {msg.text}
-                  </span>
-                  {msg.role === "user" && (
-                    <Avatar size="sm" name="User" image="https://placekitten.com/33/33" />
-                  )}
-                </Tile>
-              ))}
-            </div>
-            <TextArea
-              value={input}
-              labelText=""
-              placeholder="Type your message…"
-              rows={3}
-              onChange={(e) => setInput(e.target.value)}
-            />
-            <Button onClick={handleSend} style={{ marginTop: "0.5rem" }}>
-              Send
-            </Button>
-          </Column>
-        </Row>
-      </Grid>
-    </Theme>
+    <div style={{ padding: "1rem" }}>
+      <div
+        style={{
+          height: "60vh",
+          overflowY: "auto",
+          border: "1px solid #ccc",
+          padding: "0.5rem",
+          marginBottom: "1rem",
+        }}
+      >
+        {messages.map((msg, idx) => (
+          <div
+            key={idx}
+            style={{
+              textAlign: msg.role === "user" ? "right" : "left",
+              marginBottom: "0.5rem",
+            }}
+          >
+            <strong>{msg.role}:</strong> {msg.text}
+          </div>
+        ))}
+      </div>
+
+      <TextArea
+        value={input}
+        labelText=""
+        placeholder="Type your message…"
+        rows={3}
+        onChange={e => setInput(e.target.value)}
+      />
+      <Button onClick={handleSend} style={{ marginTop: "0.5rem" }}>
+        Send
+      </Button>
+    </div>
   );
 }
 
