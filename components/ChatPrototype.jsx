@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import { TextArea, Button } from "@carbon/react";
-import "./ChatPrototype.css";
 
 export default function ChatPrototype() {
   const [messages, setMessages] = useState([]);
