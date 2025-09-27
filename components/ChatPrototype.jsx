@@ -1,4 +1,3 @@
-// components/ChatPrototype.jsx
 import React, { useState, useEffect } from "react";
 import {
   TextArea,
@@ -15,7 +14,6 @@ export default function ChatPrototype() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
 
-  // Initialize mocked conversation on client only
   useEffect(() => {
     setMessages([
       { role: "assistant", text: "Hello! I’m here to chat with you." },
@@ -27,16 +25,11 @@ export default function ChatPrototype() {
   const handleSend = () => {
     if (!input.trim()) return;
 
-    // Add user message immediately
     setMessages(prev => [...prev, { role: "user", text: input }]);
     setInput("");
 
-    // Simulate assistant response after 1s
     setTimeout(() => {
-      setMessages(prev => [
-        ...prev,
-        { role: "assistant", text: "This is a mocked response." }
-      ]);
+      setMessages(prev => [...prev, { role: "assistant", text: "This is a mocked response." }]);
     }, 1000);
   };
 
@@ -45,17 +38,15 @@ export default function ChatPrototype() {
       <Grid fullWidth>
         <Row>
           <Column lg={12}>
-            <div
-              style={{
-                height: "70vh",
-                overflowY: "auto",
-                marginBottom: "1rem",
-                padding: "1rem",
-                border: "1px solid #e0e0e0",
-                borderRadius: "0.5rem",
-                background: "white"
-              }}
-            >
+            <div style={{
+              height: "70vh",
+              overflowY: "auto",
+              marginBottom: "1rem",
+              padding: "1rem",
+              border: "1px solid #e0e0e0",
+              borderRadius: "0.5rem",
+              background: "white"
+            }}>
               {messages.map((msg, idx) => (
                 <Tile
                   key={idx}
