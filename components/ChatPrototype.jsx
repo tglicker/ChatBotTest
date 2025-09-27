@@ -9,7 +9,6 @@ import {
   Theme,
   Avatar
 } from "@carbon/react";
-import "../styles/globals.css";
 
 export default function ChatPrototype() {
   const [messages, setMessages] = useState([
