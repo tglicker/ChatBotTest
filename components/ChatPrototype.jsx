@@ -5,9 +5,7 @@ import {
   Tile,
   Grid,
   Column,
-  Row,
-  Theme,
-  Avatar
+  Row
 } from "@carbon/react";
 
 export default function ChatPrototype() {
