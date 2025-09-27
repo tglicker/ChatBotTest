@@ -1,56 +1,73 @@
+// components/ChatPrototype.jsx
 import { useState, useRef, useEffect } from "react";
 import { Button, TextArea } from "@carbon/react";
+import styles from "./ChatPrototype.module.css"; // optional CSS module for custom styling
 
 export default function ChatPrototype() {
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState([]);
-  const endOfMessagesRef = useRef(null);
+  const [messages, setMessages] = useState([
+    { role: "assistant", text: "Hello! How can I help you today?", timestamp: "10:00 AM" },
+    { role: "user", text: "I want to test the chat.", timestamp: "10:01 AM" },
+  ]);
 
-  const handleSend = () => {
-    if (!input.trim()) return; // avoid sending empty messages
-    setMessages([...messages, { role: "user", text: input }]);
-    setInput("");
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  };
-
-  // Scroll to newest message whenever messages change
   useEffect(() => {
-    if (endOfMessagesRef.current) {
-      endOfMessagesRef.current.scrollIntoView({ behavior: "smooth" });
-    }
+    scrollToBottom();
   }, [messages]);
 
+  const handleSend = () => {
+    if (!input.trim()) return;
+    const now = new Date();
+    const timestamp = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+    setMessages([...messages, { role: "user", text: input, timestamp }]);
+    setInput("");
+
+    // Mock assistant response
+    setTimeout(() => {
+      const responseTimestamp = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", text: "Thanks for your message! Here's a mock reply.", timestamp: responseTimestamp },
+      ]);
+    }, 500);
+  };
+
   return (
-    <div className="chat-container">
-      <div className="chat-window" style={{ maxHeight: "400px", overflowY: "auto" }}>
+    <div className={styles.chatContainer}>
+      <div className={styles.messagesContainer}>
         {messages.map((msg, idx) => (
           <div
             key={idx}
-            className={msg.role === "user" ? "user-message" : "assistant-message"}
+            className={`${styles.message} ${msg.role === "user" ? styles.userMessage : styles.assistantMessage}`}
           >
-            {msg.text}
+            <span className={styles.messageText}>{msg.text}</span>
+            <span className={styles.timestamp}>{msg.timestamp}</span>
           </div>
         ))}
-        <div ref={endOfMessagesRef} /> {/* dummy div to scroll into view */}
+        <div ref={messagesEndRef} />
       </div>
 
-      <div className="chat-input" style={{ display: "flex", gap: "0.5rem", marginTop: "1rem" }}>
+      <div className={styles.inputContainer}>
         <TextArea
           value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          labelText=""
           placeholder="Type a message..."
-          rows={2}
-          style={{ flex: 1 }}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              handleSend();
+            }
+          }}
         />
-        <Button onClick={handleSend}>Send</Button>
+        <Button style={{ width: "80px" }} onClick={handleSend}>
+          Send
+        </Button>
       </div>
     </div>
   );
