@@ -1,80 +1,56 @@
-import React, { useState, useEffect, useRef } from "react";
-import { TextArea, Button } from "@carbon/react";
+import { useState, useRef, useEffect } from "react";
+import { Button, TextArea } from "@carbon/react";
 
 export default function ChatPrototype() {
-  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
-  const messagesEndRef = useRef(null);
-
-  useEffect(() => {
-    // Initial mock messages
-    setMessages([
-      { role: "assistant", text: "Hello! Welcome to our chat.", timestamp: new Date() },
-      { role: "user", text: "Hi there!", timestamp: new Date() },
-      { role: "assistant", text: "How can I assist you today?", timestamp: new Date() }
-    ]);
-  }, []);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  const [messages, setMessages] = useState([]);
+  const endOfMessagesRef = useRef(null);
 
   const handleSend = () => {
-    if (!input.trim()) return;
-
-    const newMessage = { role: "user", text: input, timestamp: new Date() };
-    setMessages(prev => [...prev, newMessage]);
+    if (!input.trim()) return; // avoid sending empty messages
+    setMessages([...messages, { role: "user", text: input }]);
     setInput("");
-
-    // Mock assistant response
-    setTimeout(() => {
-      const reply = {
-        role: "assistant",
-        text: "This is a mocked response from the assistant.",
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, reply]);
-    }, 500);
   };
 
-  const formatTime = (date) => {
-    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
   };
+
+  // Scroll to newest message whenever messages change
+  useEffect(() => {
+    if (endOfMessagesRef.current) {
+      endOfMessagesRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   return (
     <div className="chat-container">
-      <div className="chat-window">
+      <div className="chat-window" style={{ maxHeight: "400px", overflowY: "auto" }}>
         {messages.map((msg, idx) => (
           <div
             key={idx}
-            className={`chat-message ${msg.role === "user" ? "user" : "assistant"}`}
+            className={msg.role === "user" ? "user-message" : "assistant-message"}
           >
-            <div className="message-bubble">
-              <span>{msg.text}</span>
-              <span className="timestamp">{formatTime(msg.timestamp)}</span>
-            </div>
+            {msg.text}
           </div>
         ))}
-        <div ref={messagesEndRef} />
+        <div ref={endOfMessagesRef} /> {/* dummy div to scroll into view */}
       </div>
 
-      <div className="chat-input">
+      <div className="chat-input" style={{ display: "flex", gap: "0.5rem", marginTop: "1rem" }}>
         <TextArea
           value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
           labelText=""
           placeholder="Type a message..."
           rows={2}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              handleSend();
-            }
-          }}
+          style={{ flex: 1 }}
         />
-        <Button onClick={handleSend} className="send-button">
-          Send
-        </Button>
+        <Button onClick={handleSend}>Send</Button>
       </div>
     </div>
   );
