@@ -7,7 +7,7 @@ import {
   Column,
   Row,
   Theme
-} from "carbon-components-react";
+} from "@carbon/react";
 
 export default function ChatPrototype() {
   const [messages, setMessages] = useState([
@@ -67,4 +67,3 @@ export default function ChatPrototype() {
     </Theme>
   );
 }
-
