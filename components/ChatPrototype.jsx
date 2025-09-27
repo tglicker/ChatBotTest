@@ -1,63 +1,82 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { TextArea, Button } from "@carbon/react";
+import "./ChatPrototype.css";
 
 export default function ChatPrototype() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
+    // Initial mock messages
     setMessages([
-      { role: "assistant", text: "Hello! I’m here to chat with you." },
-      { role: "user", text: "Hi there!" },
-      { role: "assistant", text: "How can I help today?" }
+      { role: "assistant", text: "Hello! Welcome to our chat.", timestamp: new Date() },
+      { role: "user", text: "Hi there!", timestamp: new Date() },
+      { role: "assistant", text: "How can I assist you today?", timestamp: new Date() }
     ]);
   }, []);
 
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   const handleSend = () => {
     if (!input.trim()) return;
-    setMessages(prev => [...prev, { role: "user", text: input }]);
+
+    const newMessage = { role: "user", text: input, timestamp: new Date() };
+    setMessages(prev => [...prev, newMessage]);
     setInput("");
 
+    // Mock assistant response
     setTimeout(() => {
-      setMessages(prev => [...prev, { role: "assistant", text: "This is a mocked response." }]);
+      const reply = {
+        role: "assistant",
+        text: "This is a mocked response from the assistant.",
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, reply]);
     }, 500);
   };
 
+  const formatTime = (date) => {
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  };
+
   return (
-    <div style={{ padding: "1rem" }}>
-      <div
-        style={{
-          height: "60vh",
-          overflowY: "auto",
-          border: "1px solid #ccc",
-          padding: "0.5rem",
-          marginBottom: "1rem",
-        }}
-      >
+    <div className="chat-container">
+      <div className="chat-window">
         {messages.map((msg, idx) => (
           <div
             key={idx}
-            style={{
-              textAlign: msg.role === "user" ? "right" : "left",
-              marginBottom: "0.5rem",
-            }}
+            className={`chat-message ${msg.role === "user" ? "user" : "assistant"}`}
           >
-            <strong>{msg.role}:</strong> {msg.text}
+            <div className="message-bubble">
+              <span>{msg.text}</span>
+              <span className="timestamp">{formatTime(msg.timestamp)}</span>
+            </div>
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
 
-      <TextArea
-        value={input}
-        labelText=""
-        placeholder="Type your message…"
-        rows={3}
-        onChange={e => setInput(e.target.value)}
-      />
-      <Button onClick={handleSend} style={{ marginTop: "0.5rem" }}>
-        Send
-      </Button>
+      <div className="chat-input">
+        <TextArea
+          value={input}
+          labelText=""
+          placeholder="Type a message..."
+          rows={2}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              handleSend();
+            }
+          }}
+        />
+        <Button onClick={handleSend} className="send-button">
+          Send
+        </Button>
+      </div>
     </div>
   );
 }
-
