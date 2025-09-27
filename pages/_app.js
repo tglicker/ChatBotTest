@@ -1,7 +1,5 @@
-import "../styles/globals.css";
-import "carbon-components/css/carbon-components.min.css";
+import '../styles/globals.css'
 
 export default function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} />;
+  return <Component {...pageProps} />
 }
-
